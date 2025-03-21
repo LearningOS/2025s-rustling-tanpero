@@ -2,7 +2,7 @@
 	graph
 	This problem requires you to implement a basic graph functio
 */
-// I AM NOT DONE
+
 
 use std::collections::{HashMap, HashSet};
 use std::fmt;
@@ -29,7 +29,21 @@ impl Graph for UndirectedGraph {
         &self.adjacency_table
     }
     fn add_edge(&mut self, edge: (&str, &str, i32)) {
-        //TODO
+        let (from_node, to_node, weight) = edge;
+        
+        // 确保两个节点都存在于图中
+        self.add_node(from_node);
+        self.add_node(to_node);
+        
+        // 添加从 from_node 到 to_node 的边
+        if let Some(edges) = self.adjacency_table_mutable().get_mut(from_node) {
+            edges.push((to_node.to_string(), weight));
+        }
+        
+        // 添加从 to_node 到 from_node 的边（无向图需要双向添加）
+        if let Some(edges) = self.adjacency_table_mutable().get_mut(to_node) {
+            edges.push((from_node.to_string(), weight));
+        }
     }
 }
 pub trait Graph {
@@ -53,6 +67,11 @@ pub trait Graph {
         // 添加从 from_node 到 to_node 的边
         if let Some(edges) = self.adjacency_table_mutable().get_mut(from_node) {
             edges.push((to_node.to_string(), weight));
+        }
+        
+        // 添加从 to_node 到 from_node 的边（无向图需要双向添加）
+        if let Some(edges) = self.adjacency_table_mutable().get_mut(to_node) {
+            edges.push((from_node.to_string(), weight));
         }
     }
     fn contains(&self, node: &str) -> bool {

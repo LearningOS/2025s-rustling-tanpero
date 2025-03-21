@@ -9,8 +9,6 @@
 // Execute `rustlings hint errors1` or use the `hint` watch subcommand for a
 // hint.
 
-// 删除此行以表示练习已完成
-// I AM NOT DONE
 
 pub fn generate_nametag_text(name: String) -> Result<String, String> {
     if name.is_empty() {

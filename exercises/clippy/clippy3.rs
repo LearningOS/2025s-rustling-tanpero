@@ -4,7 +4,6 @@
 //
 // Execute `rustlings hint clippy3` or use the `hint` watch subcommand for a hint.
 
-// I AM NOT DONE
 
 #[allow(unused_variables, unused_assignments)]
 fn main() {
@@ -26,7 +25,7 @@ fn main() {
     // 问题3：resize 方法不返回值，而是修改原向量
     // 修复：分开声明和调用 resize
     let mut my_empty_vec = vec![1, 2, 3, 4, 5];
-    my_empty_vec.resize(0, 5);
+    my_empty_vec.clear(); // 使用 clear() 替代 resize(0, 5)
     println!("This Vec is empty, see? {:?}", my_empty_vec);
 
     // 问题4：交换变量的值应该使用 std::mem::swap
