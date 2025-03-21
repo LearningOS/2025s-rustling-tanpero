@@ -37,7 +37,22 @@ where
     }
 
     pub fn add(&mut self, value: T) {
-        //TODO
+        // 添加元素到堆的末尾
+        self.items.push(value);
+        self.count += 1;
+        let mut idx = self.count;
+        
+        // 向上调整堆（上浮）
+        while idx > 1 {
+            let parent = self.parent_idx(idx);
+            // 如果当前元素满足比较条件（比父节点更适合在上面），则交换
+            if (self.comparator)(&self.items[idx], &self.items[parent]) {
+                self.items.swap(idx, parent);
+                idx = parent;
+            } else {
+                break;
+            }
+        }
     }
 
     fn parent_idx(&self, idx: usize) -> usize {
@@ -57,8 +72,16 @@ where
     }
 
     fn smallest_child_idx(&self, idx: usize) -> usize {
-        //TODO
-		0
+        // 获取左右子节点的索引
+        let left = self.left_child_idx(idx);
+        let right = self.right_child_idx(idx);
+        
+        // 如果右子节点存在且满足比较条件（比左子节点更适合在上面）
+        if right <= self.count && (self.comparator)(&self.items[right], &self.items[left]) {
+            right
+        } else {
+            left
+        }
     }
 }
 
@@ -84,8 +107,34 @@ where
     type Item = T;
 
     fn next(&mut self) -> Option<T> {
-        //TODO
-		None
+        if self.is_empty() {
+            return None;
+        }
+        
+        // 取出堆顶元素
+        let result = std::mem::replace(&mut self.items[1], self.items[self.count].clone());
+        
+        // 移除最后一个元素
+        self.items.pop();
+        self.count -= 1;
+        
+        if self.count > 0 {
+            let mut idx = 1;
+            
+            // 向下调整堆（下沉）
+            while self.children_present(idx) {
+                let child = self.smallest_child_idx(idx);
+                // 如果子节点满足比较条件（比当前节点更适合在上面），则交换
+                if (self.comparator)(&self.items[child], &self.items[idx]) {
+                    self.items.swap(idx, child);
+                    idx = child;
+                } else {
+                    break;
+                }
+            }
+        }
+        
+        Some(result)
     }
 }
 
