@@ -1,13 +1,15 @@
 // enums2.rs
 //
 // Execute `rustlings hint enums2` or use the `hint` watch subcommand for a
-// hint.
-
-// I AM NOT DONE
+// hint.这是一道未完成的练习题，根据注释信息完成
 
 #[derive(Debug)]
 enum Message {
     // TODO: define the different variants used below
+    Move { x: i32, y: i32 },
+    Echo(String),
+    ChangeColor(i32, i32, i32),
+    Quit,
 }
 
 impl Message {
