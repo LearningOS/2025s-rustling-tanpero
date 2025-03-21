@@ -16,7 +16,15 @@ enum CreationError {
 
 impl PositiveNonzeroInteger {
     fn new(value: i64) -> Result<PositiveNonzeroInteger, CreationError> {
-        // Hmm...? Why is this only returning an Ok value?
+        // 检查输入值是否为负数
+        if value < 0 {
+            return Err(CreationError::Negative);
+        }
+        // 检查输入值是否为零
+        if value == 0 {
+            return Err(CreationError::Zero);
+        }
+        // 只有正数才能创建 PositiveNonzeroInteger
         Ok(PositiveNonzeroInteger(value as u64))
     }
 }

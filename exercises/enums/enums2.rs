@@ -1,7 +1,7 @@
 // enums2.rs
 //
 // Execute `rustlings hint enums2` or use the `hint` watch subcommand for a
-// hint.这是一道未完成的练习题，根据注释信息完成
+// hint.
 
 #[derive(Debug)]
 enum Message {
