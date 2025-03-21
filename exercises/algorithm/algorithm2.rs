@@ -73,7 +73,36 @@ impl<T> LinkedList<T> {
         }
     }
 	pub fn reverse(&mut self){
-		// TODO
+		// 如果链表为空或只有一个节点，无需反转
+		if self.length <= 1 {
+			return;
+		}
+		
+		// 保存原始的起始和结束节点
+		let old_start = self.start;
+		let old_end = self.end;
+		
+		// 从头节点开始遍历
+		let mut current = self.start;
+		
+		while let Some(node_ptr) = current {
+			unsafe {
+				// 获取当前节点
+				let node = &mut *node_ptr.as_ptr();
+				
+				// 交换前向和后向指针
+				let temp = node.next;
+				node.next = node.prev;
+				node.prev = temp;
+				
+				// 移动到下一个节点（现在是prev，因为我们已经交换了指针）
+				current = node.prev;
+			}
+		}
+		
+		// 交换链表的起始和结束节点
+		self.start = old_end;
+		self.end = old_start;
 	}
 }
 

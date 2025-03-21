@@ -69,14 +69,60 @@ impl<T> LinkedList<T> {
             },
         }
     }
-	pub fn merge(list_a:LinkedList<T>,list_b:LinkedList<T>) -> Self
+	pub fn merge(list_a: LinkedList<T>, list_b: LinkedList<T>) -> Self
+	where
+        T: Ord + Clone,  // 需要T实现Ord和Clone trait
 	{
-		//TODO
-		Self {
-            length: 0,
-            start: None,
-            end: None,
+		let mut result = LinkedList::new();
+        
+        // 创建两个向量来存储链表中的值
+        let mut vec_a = Vec::new();
+        let mut vec_b = Vec::new();
+        
+        // 将链表A的值存入向量
+        let mut current = list_a.start;
+        while let Some(node_ptr) = current {
+            unsafe {
+                vec_a.push((*node_ptr.as_ptr()).val.clone());
+                current = (*node_ptr.as_ptr()).next;
+            }
         }
+        
+        // 将链表B的值存入向量
+        let mut current = list_b.start;
+        while let Some(node_ptr) = current {
+            unsafe {
+                vec_b.push((*node_ptr.as_ptr()).val.clone());
+                current = (*node_ptr.as_ptr()).next;
+            }
+        }
+        
+        // 合并两个向量
+        let mut i = 0;
+        let mut j = 0;
+        
+        while i < vec_a.len() && j < vec_b.len() {
+            if vec_a[i] <= vec_b[j] {
+                result.add(vec_a[i].clone());
+                i += 1;
+            } else {
+                result.add(vec_b[j].clone());
+                j += 1;
+            }
+        }
+        
+        // 添加剩余的元素
+        while i < vec_a.len() {
+            result.add(vec_a[i].clone());
+            i += 1;
+        }
+        
+        while j < vec_b.len() {
+            result.add(vec_b[j].clone());
+            j += 1;
+        }
+        
+        result
 	}
 }
 
