@@ -16,44 +16,20 @@
 //
 // Execute `rustlings hint quiz3` or use the `hint` watch subcommand for a hint.
 
-// 定义一个 Display 特征，用于将成绩格式化为字符串
-pub trait Display {
-    fn display(&self) -> String;
-}
+use std::fmt::Display;
 
-// 为 f32 实现 Display 特征
-impl Display for f32 {
-    fn display(&self) -> String {
-        self.to_string()
-    }
-}
-
-// 为 String 实现 Display 特征
-impl Display for String {
-    fn display(&self) -> String {
-        self.clone()
-    }
-}
-
-// 为 &str 实现 Display 特征
-impl Display for &str {
-    fn display(&self) -> String {
-        (*self).to_string()
-    }
-}
-
-// 将 ReportCard 改为泛型结构体，其中 G 是实现了 Display 特征的类型
-pub struct ReportCard<G: Display> {
-    pub grade: G,
+pub struct ReportCard<T> {
+    pub grade: T,
     pub student_name: String,
     pub student_age: u8,
 }
 
-// 为泛型 ReportCard 实现 print 方法
-impl<G: Display> ReportCard<G> {
+impl<T: Display> ReportCard<T> {
     pub fn print(&self) -> String {
-        format!("{} ({}) - achieved a grade of {}",
-            &self.student_name, &self.student_age, &self.grade.display())
+        format!(
+            "{} ({}) - achieved a grade of {}",
+            &self.student_name, &self.student_age, &self.grade
+        )
     }
 }
 
@@ -78,7 +54,7 @@ mod tests {
     fn generate_alphabetic_report_card() {
         // TODO: Make sure to change the grade here after you finish the exercise.
         let report_card = ReportCard {
-            grade: "A+",
+            grade: "A+".to_string(),
             student_name: "Gary Plotter".to_string(),
             student_age: 11,
         };

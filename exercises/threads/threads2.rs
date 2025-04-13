@@ -7,7 +7,8 @@
 // Execute `rustlings hint threads2` or use the `hint` watch subcommand for a
 // hint.
 
-use std::sync::{Arc, Mutex};
+use std::sync::Arc;
+use std::sync::Mutex;
 use std::thread;
 use std::time::Duration;
 
@@ -22,15 +23,12 @@ fn main() {
         let status_shared = Arc::clone(&status);
         let handle = thread::spawn(move || {
             thread::sleep(Duration::from_millis(250));
-            // 使用 lock() 获取互斥锁，然后更新共享值
-            let mut status_locked = status_shared.lock().unwrap();
-            status_locked.jobs_completed += 1;
+            status_shared.lock().unwrap().jobs_completed += 1;
         });
         handles.push(handle);
     }
     for handle in handles {
         handle.join().unwrap();
-        // 打印当前的 jobs_completed 值
-        println!("jobs completed {}", status.lock().unwrap().jobs_completed);
     }
+    println!("jobs completed {}", status.lock().unwrap().jobs_completed);
 }

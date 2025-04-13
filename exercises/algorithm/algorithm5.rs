@@ -1,14 +1,13 @@
 /*
-	bfs
-	This problem requires you to implement a basic BFS algorithm
+    bfs
+    This problem requires you to implement a basic BFS algorithm
 */
-
 
 use std::collections::VecDeque;
 
 // Define a graph
 struct Graph {
-    adj: Vec<Vec<usize>>, 
+    adj: Vec<Vec<usize>>,
 }
 
 impl Graph {
@@ -21,39 +20,31 @@ impl Graph {
 
     // Add an edge to the graph
     fn add_edge(&mut self, src: usize, dest: usize) {
-        self.adj[src].push(dest); 
-        self.adj[dest].push(src); 
+        self.adj[src].push(dest);
+        self.adj[dest].push(src);
     }
 
     // Perform a breadth-first search on the graph, return the order of visited nodes
     fn bfs_with_return(&self, start: usize) -> Vec<usize> {
-        let mut visited = vec![false; self.adj.len()];
+        let mut visit_order = vec![start];
         let mut queue = VecDeque::new();
-        let mut visit_order = vec![];
-        
-        // 标记起始节点为已访问并加入队列
-        visited[start] = true;
-        queue.push_back(start);
-        
-        // BFS 主循环
-        while !queue.is_empty() {
-            // 从队列中取出一个节点
-            let vertex = queue.pop_front().unwrap();
-            visit_order.push(vertex);
-            
-            // 访问所有相邻且未访问过的节点
-            for &neighbor in &self.adj[vertex] {
-                if !visited[neighbor] {
-                    visited[neighbor] = true;
-                    queue.push_back(neighbor);
-                }
+        for elem in self.adj[start].iter() {
+            queue.push_back(*elem);
+        }
+        while !queue.is_empty() && visit_order.len() < self.adj.len() {
+            let head = queue.pop_front().unwrap();
+            visit_order.push(head);
+            for elem in self.adj[head].iter() {
+                queue.push_back(*elem);
+            }
+            if head == start && visit_order.len() < self.adj.len() {
+                visit_order.pop();
             }
         }
-        
+
         visit_order
     }
 }
-
 
 #[cfg(test)]
 mod tests {
@@ -97,10 +88,9 @@ mod tests {
 
     #[test]
     fn test_bfs_single_node() {
-        let mut graph = Graph::new(1);
+        let graph = Graph::new(1);
 
         let visited_order = graph.bfs_with_return(0);
         assert_eq!(visited_order, vec![0]);
     }
 }
-

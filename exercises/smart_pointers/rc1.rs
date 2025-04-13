@@ -57,17 +57,17 @@ fn main() {
     println!("reference count = {}", Rc::strong_count(&sun)); // 6 references
     jupiter.details();
 
-    // 修复：使用Rc::clone共享同一个太阳实例
+    // TODO
     let saturn = Planet::Saturn(Rc::clone(&sun));
     println!("reference count = {}", Rc::strong_count(&sun)); // 7 references
     saturn.details();
 
-    // 修复：使用Rc::clone共享同一个太阳实例
+    // TODO
     let uranus = Planet::Uranus(Rc::clone(&sun));
     println!("reference count = {}", Rc::strong_count(&sun)); // 8 references
     uranus.details();
 
-    // 修复：使用Rc::clone共享同一个太阳实例
+    // TODO
     let neptune = Planet::Neptune(Rc::clone(&sun));
     println!("reference count = {}", Rc::strong_count(&sun)); // 9 references
     neptune.details();
@@ -89,15 +89,15 @@ fn main() {
     drop(mars);
     println!("reference count = {}", Rc::strong_count(&sun)); // 4 references
 
-    // 添加：丢弃地球
+    // TODO
     drop(earth);
     println!("reference count = {}", Rc::strong_count(&sun)); // 3 references
 
-    // 添加：丢弃金星
+    // TODO
     drop(venus);
     println!("reference count = {}", Rc::strong_count(&sun)); // 2 references
 
-    // 添加：丢弃水星
+    // TODO
     drop(mercury);
     println!("reference count = {}", Rc::strong_count(&sun)); // 1 reference
 

@@ -1,8 +1,9 @@
 /*
-	queue
-	This question requires you to use queues to implement the functionality of the stac
+    queue
+    This question requires you to use queues to implement the functionality of the stac
 */
 
+use std::fmt::Debug;
 
 #[derive(Debug)]
 pub struct Queue<T> {
@@ -52,60 +53,54 @@ impl<T> Default for Queue<T> {
     }
 }
 
-pub struct myStack<T>
-{
-	q1:Queue<T>,
-	q2:Queue<T>
+pub struct MyStack<T> {
+    q1: Queue<T>,
+    q2: Queue<T>,
 }
-impl<T> myStack<T> {
+impl<T: Debug> MyStack<T> {
     pub fn new() -> Self {
         Self {
-			q1:Queue::<T>::new(),
-			q2:Queue::<T>::new()
+            q1: Queue::<T>::new(),
+            q2: Queue::<T>::new(),
         }
     }
     pub fn push(&mut self, elem: T) {
-        // 将元素添加到非空的队列中，如果两个都为空，则添加到q1
-        if !self.q1.is_empty() {
+        if let Ok(_) = self.q1.peek() {
             self.q1.enqueue(elem);
         } else {
             self.q2.enqueue(elem);
         }
     }
     pub fn pop(&mut self) -> Result<T, &str> {
-        // 确定哪个队列有元素
-        let (from_queue, to_queue) = if !self.q1.is_empty() {
-            (&mut self.q1, &mut self.q2)
-        } else if !self.q2.is_empty() {
-            (&mut self.q2, &mut self.q1)
+        if self.is_empty() {
+            Err("Stack is empty")
         } else {
-            return Err("Stack is empty");
-        };
-        
-        // 将除最后一个元素外的所有元素移到另一个队列
-        let size = from_queue.size();
-        for _ in 0..size-1 {
-            if let Ok(value) = from_queue.dequeue() {
-                to_queue.enqueue(value);
-            }
+            Ok(if self.q1.is_empty() {
+                Self::move_to_empty_and_return_last(&mut self.q1, &mut self.q2)
+            } else {
+                Self::move_to_empty_and_return_last(&mut self.q2, &mut self.q1)
+            })
         }
-        
-        // 返回最后一个元素
-        from_queue.dequeue()
     }
     pub fn is_empty(&self) -> bool {
         self.q1.is_empty() && self.q2.is_empty()
+    }
+    fn move_to_empty_and_return_last(empty: &mut Queue<T>, another: &mut Queue<T>) -> T {
+        while another.size() > 1 {
+            empty.enqueue(another.dequeue().unwrap());
+        }
+        another.dequeue().unwrap()
     }
 }
 
 #[cfg(test)]
 mod tests {
-	use super::*;
-	
-	#[test]
-	fn test_queue(){
-		let mut s = myStack::<i32>::new();
-		assert_eq!(s.pop(), Err("Stack is empty"));
+    use super::*;
+
+    #[test]
+    fn test_queue() {
+        let mut s = MyStack::<i32>::new();
+        assert_eq!(s.pop(), Err("Stack is empty"));
         s.push(1);
         s.push(2);
         s.push(3);
@@ -119,5 +114,5 @@ mod tests {
         assert_eq!(s.pop(), Ok(1));
         assert_eq!(s.pop(), Err("Stack is empty"));
         assert_eq!(s.is_empty(), true);
-	}
+    }
 }

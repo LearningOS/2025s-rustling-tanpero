@@ -46,8 +46,8 @@ mod tests {
         let slice = [0, 1, 2];
         let mut input = Cow::from(&slice[..]);
         match abs_all(&mut input) {
-            Cow::Borrowed(_) => Ok(()),
-            _ => Err("Expected borrowed value"),
+            Cow::Borrowed(borrowed) => Ok(()),
+            Cow::Owned(owned) => Err("Expected borrowed value"),
         }
     }
 

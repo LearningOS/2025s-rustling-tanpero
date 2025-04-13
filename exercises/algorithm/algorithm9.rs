@@ -1,8 +1,7 @@
 /*
-	heap
-	This question requires you to implement a binary heap function
+    heap
+    This question requires you to implement a binary heap function
 */
-
 
 use std::cmp::Ord;
 use std::default::Default;
@@ -40,12 +39,13 @@ where
         // 添加元素到堆的末尾
         self.items.push(value);
         self.count += 1;
-        let mut idx = self.count;
         
-        // 向上调整堆（上浮）
+        // 上浮新添加的元素到正确位置
+        let mut idx = self.count;
         while idx > 1 {
             let parent = self.parent_idx(idx);
-            // 如果当前元素满足比较条件（比父节点更适合在上面），则交换
+            
+            // 如果新元素应该在父节点之上，则交换它们
             if (self.comparator)(&self.items[idx], &self.items[parent]) {
                 self.items.swap(idx, parent);
                 idx = parent;
@@ -72,15 +72,22 @@ where
     }
 
     fn smallest_child_idx(&self, idx: usize) -> usize {
-        // 获取左右子节点的索引
         let left = self.left_child_idx(idx);
         let right = self.right_child_idx(idx);
         
-        // 如果右子节点存在且满足比较条件（比左子节点更适合在上面）
-        if right <= self.count && (self.comparator)(&self.items[right], &self.items[left]) {
-            right
-        } else {
+        // 如果右子节点存在，比较左右子节点，返回符合比较器条件的那个
+        if right <= self.count {
+            if (self.comparator)(&self.items[left], &self.items[right]) {
+                left
+            } else {
+                right
+            }
+        } else if left <= self.count {
+            // 只有左子节点存在
             left
+        } else {
+            // 没有子节点，返回0（实际上不应该到达这里）
+            0
         }
     }
 }
@@ -102,7 +109,7 @@ where
 
 impl<T> Iterator for Heap<T>
 where
-    T: Default,
+    T: Default + Clone,
 {
     type Item = T;
 
@@ -111,30 +118,36 @@ where
             return None;
         }
         
+        // 先克隆最后一个元素以避免同时借用问题
+        let last_item = self.items[self.count].clone();
+        
         // 取出堆顶元素
-        let result = std::mem::replace(&mut self.items[1], self.items[self.count].clone());
+        let next_val = std::mem::replace(&mut self.items[1], last_item);
         
         // 移除最后一个元素
         self.items.pop();
         self.count -= 1;
         
-        if self.count > 0 {
-            let mut idx = 1;
+        // 如果堆为空，直接返回
+        if self.is_empty() {
+            return Some(next_val);
+        }
+        
+        // 下沉堆顶元素到正确位置
+        let mut idx = 1;
+        while self.children_present(idx) {
+            let child = self.smallest_child_idx(idx);
             
-            // 向下调整堆（下沉）
-            while self.children_present(idx) {
-                let child = self.smallest_child_idx(idx);
-                // 如果子节点满足比较条件（比当前节点更适合在上面），则交换
-                if (self.comparator)(&self.items[child], &self.items[idx]) {
-                    self.items.swap(idx, child);
-                    idx = child;
-                } else {
-                    break;
-                }
+            // 如果子节点应该在当前节点之上，则交换它们
+            if (self.comparator)(&self.items[child], &self.items[idx]) {
+                self.items.swap(idx, child);
+                idx = child;
+            } else {
+                break;
             }
         }
         
-        Some(result)
+        Some(next_val)
     }
 }
 

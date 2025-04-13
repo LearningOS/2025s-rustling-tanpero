@@ -7,6 +7,8 @@
 // Execute `rustlings hint from_into` or use the `hint` watch subcommand for a
 // hint.
 
+use std::ops::Not;
+
 #[derive(Debug)]
 struct Person {
     name: String,
@@ -42,35 +44,18 @@ impl Default for Person {
 
 impl From<&str> for Person {
     fn from(s: &str) -> Person {
-        // 1. 如果字符串长度为0，返回默认Person
-        if s.len() == 0 {
-            return Person::default();
-        }
-        
-        // 2. 按逗号分割字符串
-        let parts: Vec<&str> = s.split(',').collect();
-        
-        // 检查分割后的部分数量是否正确
-        if parts.len() != 2 {
-            return Person::default();
-        }
-        
-        // 3. 提取第一个元素作为名字
-        let name = parts[0];
-        
-        // 4. 如果名字为空，返回默认Person
-        if name.is_empty() {
-            return Person::default();
-        }
-        
-        // 5. 提取第二个元素并解析为usize作为年龄
-        match parts[1].parse::<usize>() {
-            Ok(age) => Person {
-                name: String::from(name),
-                age,
-            },
-            // 如果解析年龄出错，返回默认Person
-            Err(_) => Person::default(),
+        match s.split(",").collect::<Vec<_>>().as_slice() {
+            &[name, age] => age
+                .parse()
+                .ok()
+                .and_then(|age| {
+                    name.is_empty().not().then(|| Person {
+                        name: name.to_string(),
+                        age,
+                    })
+                })
+                .unwrap_or_default(),
+            _ => Person::default(),
         }
     }
 }

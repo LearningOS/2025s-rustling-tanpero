@@ -24,9 +24,8 @@ fn main() {
 
     let mut results: Vec<u128> = vec![];
     for handle in handles {
-        // 使用 join() 方法等待线程完成并获取其返回值
-        // unwrap() 用于处理可能的错误
-        results.push(handle.join().unwrap());
+        let x = handle.join().unwrap();
+        results.push(x);
     }
 
     if results.len() != 10 {

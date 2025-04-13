@@ -12,12 +12,10 @@ trait AppendBar {
     fn append_bar(self) -> Self;
 }
 
-// 为 Vec<String> 实现 AppendBar trait
 impl AppendBar for Vec<String> {
-    fn append_bar(self) -> Self {
-        let mut v = self;
-        v.push(String::from("Bar"));
-        v
+    fn append_bar(mut self) -> Self {
+        self.push("Bar".to_string());
+        self
     }
 }
 

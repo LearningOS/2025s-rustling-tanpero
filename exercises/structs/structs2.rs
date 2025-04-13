@@ -19,7 +19,7 @@ struct Order {
 fn create_order_template() -> Order {
     Order {
         name: String::from("Bob"),
-        year: 2025,
+        year: 2019,
         made_by_phone: false,
         made_by_mobile: false,
         made_by_email: true,
@@ -35,9 +35,8 @@ mod tests {
     #[test]
     fn your_order() {
         let order_template = create_order_template();
-        // TODO: Create your own order using the update syntax and template above!
         let your_order = Order {
-            name: String::from("Hacker in Rust"),
+            name: "Hacker in Rust".to_string(),
             count: 1,
             ..order_template
         };

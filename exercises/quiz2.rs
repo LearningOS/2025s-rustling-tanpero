@@ -29,23 +29,21 @@ pub enum Command {
 mod my_module {
     use super::Command;
 
-    // 完成函数签名
     pub fn transformer(input: Vec<(String, Command)>) -> Vec<String> {
-        // 完成输出声明
-        let mut output: Vec<String> = vec![];
+        let mut output = vec![];
         for (string, command) in input.iter() {
-            // 完成函数体
-            match command {
-                Command::Uppercase => output.push(string.to_uppercase()),
-                Command::Trim => output.push(string.trim().to_string()),
-                Command::Append(times) => {
-                    let mut result = string.clone();
-                    for _ in 0..*times {
-                        result.push_str("bar");
+            let out = match command {
+                &Command::Trim => string.trim().to_string(),
+                &Command::Append(n) => {
+                    let mut string = string.clone();
+                    for _ in 0..n {
+                        string.push_str("bar");
                     }
-                    output.push(result);
+                    string
                 }
-            }
+                &Command::Uppercase => string.to_uppercase(),
+            };
+            output.push(out);
         }
         output
     }
@@ -53,7 +51,6 @@ mod my_module {
 
 #[cfg(test)]
 mod tests {
-    // 导入 transformer 函数
     use super::my_module::transformer;
     use super::Command;
 

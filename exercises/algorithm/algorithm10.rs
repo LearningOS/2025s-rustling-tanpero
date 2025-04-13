@@ -1,8 +1,7 @@
 /*
-	graph
-	This problem requires you to implement a basic graph functio
+    graph
+    This problem requires you to implement a basic graph functio
 */
-
 
 use std::collections::{HashMap, HashSet};
 use std::fmt;
@@ -29,51 +28,25 @@ impl Graph for UndirectedGraph {
         &self.adjacency_table
     }
     fn add_edge(&mut self, edge: (&str, &str, i32)) {
-        let (from_node, to_node, weight) = edge;
-        
-        // 确保两个节点都存在于图中
-        self.add_node(from_node);
-        self.add_node(to_node);
-        
-        // 添加从 from_node 到 to_node 的边
-        if let Some(edges) = self.adjacency_table_mutable().get_mut(from_node) {
-            edges.push((to_node.to_string(), weight));
-        }
-        
-        // 添加从 to_node 到 from_node 的边（无向图需要双向添加）
-        if let Some(edges) = self.adjacency_table_mutable().get_mut(to_node) {
-            edges.push((from_node.to_string(), weight));
-        }
+        self.add_node(edge.0);
+        self.add_node(edge.1);
+        self.adjacency_table
+            .entry(edge.0.to_owned())
+            .and_modify(|edges| edges.push((edge.1.to_owned(), edge.2)));
+        self.adjacency_table
+            .entry(edge.1.to_owned())
+            .and_modify(|edges| edges.push((edge.0.to_owned(), edge.2)));
+    }
+    fn add_node(&mut self, node: &str) {
+        self.adjacency_table.entry(node.to_owned()).or_default();
     }
 }
 pub trait Graph {
     fn new() -> Self;
     fn adjacency_table_mutable(&mut self) -> &mut HashMap<String, Vec<(String, i32)>>;
     fn adjacency_table(&self) -> &HashMap<String, Vec<(String, i32)>>;
-    fn add_node(&mut self, node: &str) -> bool {
-        if self.contains(node) {
-            return false;
-        }
-        self.adjacency_table_mutable().insert(node.to_string(), Vec::new());
-        true
-    }
-    fn add_edge(&mut self, edge: (&str, &str, i32)) {
-        let (from_node, to_node, weight) = edge;
-        
-        // 确保两个节点都存在于图中
-        self.add_node(from_node);
-        self.add_node(to_node);
-        
-        // 添加从 from_node 到 to_node 的边
-        if let Some(edges) = self.adjacency_table_mutable().get_mut(from_node) {
-            edges.push((to_node.to_string(), weight));
-        }
-        
-        // 添加从 to_node 到 from_node 的边（无向图需要双向添加）
-        if let Some(edges) = self.adjacency_table_mutable().get_mut(to_node) {
-            edges.push((from_node.to_string(), weight));
-        }
-    }
+    fn add_node(&mut self, node: &str);
+    fn add_edge(&mut self, edge: (&str, &str, i32));
     fn contains(&self, node: &str) -> bool {
         self.adjacency_table().get(node).is_some()
     }
